@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NAVER 로그인</title>
+    <style>
+        /* 초기화 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        /* 전체 배경 설정 */
+        body {
+            display: flex;
+            flex-direction: column; /* 세로로 정렬 */
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #ffffff;
+        }
+
+        /* 로고 스타일 */
+        .login-container .logo {
+            font-size: 2.5rem;
+            color: #03C75A; /* 로고 색상 */
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        /* 로그인 박스 */
+        .login-container {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 2rem; /* 하단 컨테이너와의 간격 */
+        }
+
+        /* 입력 필드 감싸는 부모 요소 */
+        .input-container {
+            width: 100%;
+            border: 1px solid #dadce0;
+            border-radius: 12px; /* 전체적으로 둥근 형태 */
+            overflow: hidden; /* 내부 요소들이 부모의 테두리 안에 포함되도록 */
+            position: relative; /* absolute 위치 기준을 위해 추가 */
+        }
+
+        /* 입력 필드 */
+        .input-field {
+            width: 100%;
+            padding: 20px; /* 세로 크기를 더 크게 하기 위해 padding 값을 증가 */
+            margin: 0; /* 간격 없애기 */
+            border: 1px solid #dadce0; /* 기본 테두리 */
+            font-size: 1rem;
+            color: #333;
+            transition: border-color 0.3s ease; /* 클릭 시 테두리 색상 변경 */
+            box-sizing: border-box; /* 테두리와 패딩이 요소의 크기에 포함되도록 설정 */
+        }
+
+        /* 아이디 또는 전화번호와 비밀번호 필드가 구분되는 부분 */
+        .input-field:first-of-type {
+            border-radius: 12px 12px 0 0; /* 첫 번째 입력창은 상단 좌측, 우측을 둥글게 */
+        }
+
+        .input-field:last-of-type {
+            border-radius: 0 0 12px 12px; /* 두 번째 입력창은 하단 좌측, 우측을 둥글게 */
+        }
+
+        /* 입력 필드 클릭 시 테두리 색상 변경 */
+        .input-field:focus {
+            outline: none; /* 기본 외각선 없애기 */
+            border-color: #03C75A; /* 클릭 시 테두리 색상 변경 */
+        }
+
+        /* placeholder 스타일 */
+        .input-field::placeholder {
+            font-size: 1rem;
+            color: #999;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            transition: all 0.3s ease;
+        }
+
+        /* 입력 필드 클릭 시 placeholder 위치와 크기 변화 */
+        .input-field:focus::placeholder {
+            font-size: 0.75rem; /* 작게 만들기 */
+            top: 5px; /* 위로 이동 */
+            left: 15px; /* 오른쪽으로 약간 이동 */
+        }
+
+        /* 탭 스타일 */
+        .tabs {
+            display: flex;
+            justify-content: space-around;
+            border-bottom: 1px solid #e0e0e0;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 0.5rem;
+            font-size: 0.9rem;
+            color: #333;
+            cursor: pointer;
+        }
+
+        .tab.active {
+            font-weight: bold;
+            color: #03C75A;
+            border-bottom: 2px solid #03C75A;
+        }
+
+        /* 로그인 상태 유지 및 IP 보안 */
+        .options {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #767678;
+            margin: 8px 0;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* 버튼 */
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #0AB863;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .login-btn:hover {
+            background-color: #029a47;
+        }
+
+        /* 하단 링크 스타일 */
+        .link-container {
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: #999;
+            text-align: center;
+        }
+
+        .link-container a {
+            color: #999;
+            text-decoration: none;
+            margin: 0 5px;
+        }
+
+        .link-container a:hover {
+            color: #666;
+            text-decoration: underline;
+        }
+
+        /* 토글 스위치 */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 34px;
+            height: 20px;
+            color: #09AA5C;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            border-radius: 20px;
+            transition: 0.4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #03C75A;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(14px);
+        }
+
+        /* 하단 저작권 텍스트 스타일 */
+        .diss-container {
+            font-size: 0.8rem;
+            color: #999;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <!-- 로고 -->
+        <div class="logo">NAVER</div>
+
+        <!-- 탭 메뉴 -->
+        <div class="tabs">
+            <div class="tab active">ID/전화번호</div>
+            <div class="tab">일회용 번호</div>
+            <div class="tab">QR코드</div>
+        </div>
+
+        <!-- 입력 필드 감싸는 부모 요소 -->
+        <div class="input-container">
+            <input type="text" class="input-field" placeholder="아이디 또는 전화번호">
+            <input type="password" class="input-field" placeholder="비밀번호">
+        </div>
+
+        <!-- 로그인 옵션 -->
+        <div class="options">
+            <div class="checkbox-container">
+                <input type="checkbox" id="keep-logged-in">
+                <label for="keep-logged-in">로그인 상태 유지</label>
+            </div>
+            <div>
+                <label for="ip-security">IP보안</label>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="ip-security" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <!-- 로그인 버튼 -->
+        <button class="login-btn">로그인</button>
+
+        <!-- 하단 링크 -->
+        <div class="link-container">
+            <a href="#">비밀번호 찾기</a> |
+            <a href="#">아이디 찾기</a> |
+            <a href="#">회원가입</a>
+        </div>
+    </div>
+
+    <!-- 저작권 표시 -->
+    <div class="diss-container">
+        <span class="text">Copyright</span>
+        <span class="corp">© NAVER Corp.</span>
+        <span class="text">All Rights Reserved.</span>
+    </div>
+</body>
+</html>
